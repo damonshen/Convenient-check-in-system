@@ -1,5 +1,8 @@
 package com.example.gps_test;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,6 +10,7 @@ import org.json.JSONObject;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,13 +26,11 @@ import android.location.*;
 
 public class Gps_test extends Activity implements LocationListener{
 
-	
-	
 	private ServerConnector connect;
 	private boolean getService = false;
 	private TextView message_txt;
 	
-	Handler mHandler =  new  Handler() {  
+	private Handler mHandler =  new  Handler() {  
 		public  void  handleMessage (Message msg) {
 			message_txt = (TextView)findViewById(R.id.message);
 			message_txt.setText((String)msg.obj);
@@ -145,7 +147,8 @@ public class Gps_test extends Activity implements LocationListener{
     }
 
  
-    private void getLocation(Location location) {
+    @SuppressLint("SimpleDateFormat")
+	private void getLocation(Location location) {
 
         // TODO Auto-generated method stub
 
@@ -162,16 +165,18 @@ public class Gps_test extends Activity implements LocationListener{
             Double longitude = location.getLongitude(); //蝬漲get
 
             Double latitude = location.getLatitude();   //蝺臬漲get
-            
-            Long time = location.getTime();
-
+                                  
+            String time_str = Long.toString(location.getTime()); //get time and convert to string
+			Date date = new Date(Long.parseLong(time_str.trim()));
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss"); //transform the time into format
+			String dateString = formatter.format(date);
            
 
             longitude_txt.setText(String.valueOf(longitude));
 
             latitude_txt.setText(String.valueOf(latitude));
             
-            time_txt.setText(String.valueOf(time));
+            time_txt.setText(String.valueOf(dateString));
             
             JSONArray jsonArr = new JSONArray();
             JSONObject jsonObj = new JSONObject();
@@ -180,7 +185,7 @@ public class Gps_test extends Activity implements LocationListener{
             	jsonObj.put("id", "091234567");			
 				jsonObj.put("longitude", longitude);
 				jsonObj.put("latitude", latitude);
-				jsonObj.put("time", time);
+				jsonObj.put("time", dateString);
 				jsonArr.put(jsonObj);
 				connect = new ServerConnector(jsonArr);
 				
