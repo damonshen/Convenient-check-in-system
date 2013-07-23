@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Google Maps JavaScript API v3 Example: Marker Animations</title>
+    <link href="/maps/documentation/javascript/examples/default.css" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script>
+      var marker;
+      var map;
+      	function mark(lat, log){//標註座標函式
+        	var m = new google.maps.LatLng(lat, log);
+        	marker = new google.maps.Marker({
+          		map:map,
+          		draggable:true,
+          		position: m,
+        	});     
+      	}
+
+		function initialize() {
+        	var mapOptions = {
+          		center: new google.maps.LatLng(-34.397, 150.644),
+          		zoom: 8,
+          		mapTypeId: google.maps.MapTypeId.ROADMAP
+        	};
+        	map = new google.maps.Map(document.getElementById("map_canvas"),
+            	mapOptions);
+      	}
+      
+      	function centerAt(latitude, longitude){//地圖以給予的座標為中心，即移動地圖至給定的座標
+        	myLatlng = new google.maps.LatLng(latitude,longitude);
+          	map.panTo(myLatlng);
+      	}    
+
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div id="map_canvas" style="width: device-width; height: 460px;">map div</div>
+  </body>
+</html>

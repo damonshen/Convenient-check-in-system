@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Location;
@@ -29,32 +30,40 @@ public class Gps_test extends Activity implements LocationListener{
 	private ServerConnector connect;
 	private boolean getService = false;
 	private TextView message_txt;
+	private static final String MAP_URL = "file:///android_asset/googleMap.html"; //the url of html of google map	
+	private WebView webView; //declare the webview for google map
 	
-	private Handler mHandler =  new  Handler() {  
+	private Handler mHandler =  new  Handler() { 
 		public  void  handleMessage (Message msg) {
-			message_txt = (TextView)findViewById(R.id.message);
-			message_txt.setText((String)msg.obj);
+			//message_txt = (TextView)findViewById(R.id.message);
+			//message_txt.setText((String)msg.obj);
 		}
 	};
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gps_test);
-		
-        
+        setContentView(R.layout.activity_gps_test);    
+            
 		LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
 		
 		if (status.isProviderEnabled(LocationManager.GPS_PROVIDER) || status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			getService = true;
 			locationServiceInitial();
+			
 		} else {
 			Toast.makeText(this, "Please open the GPS service!!", Toast.LENGTH_LONG).show();
 			startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
-        
+		setupWebView();//load Webview   
     }
-
+	/** Sets up the WebView object and loads the URL of the page **/
+	@SuppressLint("SetJavaScriptEnabled")
+	private void setupWebView(){ 
+	    webView = (WebView) findViewById(R.id.google_map);
+	    webView.getSettings().setJavaScriptEnabled(true);//啟用Webview的JavaScript功能
+	    webView.loadUrl(MAP_URL);  //載入URL 
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -69,8 +78,8 @@ public class Gps_test extends Activity implements LocationListener{
     	switch(item.getItemId()){
     		case 0:
     			if(getService) {
-    				lms.requestLocationUpdates(bestProvider, 1000, 1, this);
-    				}
+    				lms.requestLocationUpdates(bestProvider, 100, 0, this);
+    			}
     			return true;
     			
     	}
@@ -86,8 +95,19 @@ public class Gps_test extends Activity implements LocationListener{
         // TODO Auto-generated method stub
 
 		getLocation(location);
-
-
+		if (location !=null){    
+	        //將畫面移至定位點的位置，呼叫在googlemaps.html中的centerAt函式
+	        final String centerURL = "javascript:centerAt(" +
+	        		location.getLatitude() + "," +
+	        		location.getLongitude()+ ")";
+	        webView.loadUrl(centerURL);
+	      
+	        final String markURL = "javascript:mark(" +
+	        		location.getLatitude() + "," +
+	        		location.getLongitude()+ ")";
+	        webView.loadUrl(markURL);
+		}
+		
     }
 
  
@@ -99,7 +119,7 @@ public class Gps_test extends Activity implements LocationListener{
     public void onProviderDisabled(String provider) {
 
         // TODO Auto-generated method stub
-
+    	Toast.makeText(this, "Location provider disabled", Toast.LENGTH_LONG).show();
     }
 
  
@@ -111,9 +131,7 @@ public class Gps_test extends Activity implements LocationListener{
     public void onProviderEnabled(String provider) {
 
         // TODO Auto-generated method stub
-
-       
-
+    	Toast.makeText(this, "Get location provider", Toast.LENGTH_LONG).show();
     }
 
  
@@ -123,9 +141,8 @@ public class Gps_test extends Activity implements LocationListener{
     @Override
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
         // TODO Auto-generated method stub
-
+    	Toast.makeText(this, "Status changed", Toast.LENGTH_LONG).show();
     }
     private LocationManager lms;
 
@@ -147,7 +164,6 @@ public class Gps_test extends Activity implements LocationListener{
     }
 
  
-    @SuppressLint("SimpleDateFormat")
 	private void getLocation(Location location) {
 
         // TODO Auto-generated method stub
@@ -178,8 +194,14 @@ public class Gps_test extends Activity implements LocationListener{
             
             time_txt.setText(String.valueOf(dateString));
             
+            message_txt = (TextView)findViewById(R.id.message);
+            message_txt.setText(String.valueOf(location));
+            
             JSONArray jsonArr = new JSONArray();
             JSONObject jsonObj = new JSONObject();
+            
+            
+            
             try {
             	
             	jsonObj.put("id", "091234567");			
@@ -216,24 +238,24 @@ public class Gps_test extends Activity implements LocationListener{
 	    	  mHandler.sendMessage(message);
 	      }
 	};
-	
+	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 		if(getService) {
-			lms.requestLocationUpdates(bestProvider, 1000, 1, this);
-			}
-		
+			lms.requestLocationUpdates(bestProvider, 1, 0, this);
+		}
+	
 	}
  
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		if(getService) {
-			lms.removeUpdates(this);	
-			}
-		
+	/*	if(getService) {
+			lms.requestLocationUpdates(bestProvider, 1, 0, this);
+		}
+	*/
 	}
 
 }
