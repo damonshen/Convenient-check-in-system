@@ -153,10 +153,13 @@ public class Gps_test extends Activity implements LocationListener{
         // TODO Auto-generated method stub
 
     lms = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+    /*
     Criteria criteria = new Criteria();
     bestProvider = lms.getBestProvider(criteria, true);
-
+	*/
+    lms.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,this);
+    lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,this);
+    
     Location location = lms.getLastKnownLocation(bestProvider);
     
         getLocation(location);
