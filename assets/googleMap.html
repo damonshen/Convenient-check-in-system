@@ -6,21 +6,53 @@
     <link href="/maps/documentation/javascript/examples/default.css" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script>
-      var marker;
       var map;
+      var goldStar = {
+				  path: google.maps.SymbolPath.CIRCLE,
+				  fillColor: "blue",
+				  scale: 5
+		};
       	function mark(lat, log){//標註座標函式
-        	var m = new google.maps.LatLng(lat, log);
-        	marker = new google.maps.Marker({
+        	var m = new google.maps.LatLng(lat, log); 	
+     	
+        	var marker = new google.maps.Marker({
           		map:map,
-          		draggable:true,
+          		draggable:false,
           		position: m,
-        	});     
+          		title: "location",
+        	});
+        	
+        	var infowindow = new google.maps.InfoWindow({
+    			content: lat + ", " + log
+				});
+        	google.maps.event.addListener(marker, 'click', function() {
+  				infowindow.open(map,marker);
+				});     
+      	}
+
+		function mark1(lat, log){//標註座標函式
+        	var m = new google.maps.LatLng(lat, log); 	
+     	
+        	var marker = new google.maps.Marker({
+          		map:map,
+          		draggable:false,
+          		position: m,
+          		title: "location",
+          		icon: goldStar
+        	});
+        	
+        	var infowindow = new google.maps.InfoWindow({
+    			content: lat + ", " + log
+				});
+        	google.maps.event.addListener(marker, 'click', function() {
+  				infowindow.open(map,marker);
+				});     
       	}
 
 		function initialize() {
         	var mapOptions = {
           		center: new google.maps.LatLng(-34.397, 150.644),
-          		zoom: 8,
+          		zoom: 15,
           		mapTypeId: google.maps.MapTypeId.ROADMAP
         	};
         	map = new google.maps.Map(document.getElementById("map_canvas"),

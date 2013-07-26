@@ -2,11 +2,9 @@ package com.example.gps_test;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,9 +12,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Location;
@@ -32,7 +30,10 @@ public class Gps_test extends Activity implements LocationListener{
 	private TextView message_txt;
 	private static final String MAP_URL = "file:///android_asset/googleMap.html"; //the url of html of google map	
 	private WebView webView; //declare the webview for google map
-	
+    private LocationManager lms;
+    private JSONArray buffer = new JSONArray();
+    
+    
 	private Handler mHandler =  new  Handler() { 
 		public  void  handleMessage (Message msg) {
 			//message_txt = (TextView)findViewById(R.id.message);
@@ -44,8 +45,21 @@ public class Gps_test extends Activity implements LocationListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gps_test);    
-            
+        
+        Button uploadButton = (Button)findViewById(R.id.uploadButton); //declare the button of uploading
+        uploadButton.setOnClickListener(new Button.OnClickListener(){ // set a button for uploading the array of location 
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+            	connect = new ServerConnector(buffer);
+				new  Thread (runnable).start();
+				buffer = new JSONArray();
+            }
+        });     
+        
 		LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
+		
+		setupWebView();//load Webview
 		
 		if (status.isProviderEnabled(LocationManager.GPS_PROVIDER) || status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			getService = true;
@@ -55,41 +69,41 @@ public class Gps_test extends Activity implements LocationListener{
 			Toast.makeText(this, "Please open the GPS service!!", Toast.LENGTH_LONG).show();
 			startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
-		setupWebView();//load Webview   
+		   
     }
 	/** Sets up the WebView object and loads the URL of the page **/
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setupWebView(){ 
 	    webView = (WebView) findViewById(R.id.google_map);
-	    webView.getSettings().setJavaScriptEnabled(true);//啟用Webview的JavaScript功能
-	    webView.loadUrl(MAP_URL);  //載入URL 
+	    webView.getSettings().setJavaScriptEnabled(true);//enable the javascript of webView
+	    webView.loadUrl(MAP_URL);  //loading URL 
 	}
+    
+    
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.gps_test, menu);
-        
-        menu.add(0, 0, 0, "Update");
-        return true;
+    private String bestProvider = LocationManager.GPS_PROVIDER;
+
+    private void locationServiceInitial() {
+
+        // TODO Auto-generated method stub
+
+    lms = (LocationManager) getSystemService(LOCATION_SERVICE);
+    /*
+    Criteria criteria = new Criteria();
+    bestProvider = lms.getBestProvider(criteria, true);
+	*/
+    //lms.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,this);
+    lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,this);
+    
+    Location location = lms.getLastKnownLocation(bestProvider);
+    
+        getLocation(location);
+
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch(item.getItemId()){
-    		case 0:
-    			if(getService) {
-    				lms.requestLocationUpdates(bestProvider, 100, 0, this);
-    			}
-    			return true;
-    			
-    	}
-    	return false;
-    }
+
     
     /*當位置改變的時候*/
-
     @Override
-
     public void onLocationChanged(Location location) {
 
         // TODO Auto-generated method stub
@@ -97,15 +111,24 @@ public class Gps_test extends Activity implements LocationListener{
 		getLocation(location);
 		if (location !=null){    
 	        //將畫面移至定位點的位置，呼叫在googlemaps.html中的centerAt函式
-	        final String centerURL = "javascript:centerAt(" +
-	        		location.getLatitude() + "," +
-	        		location.getLongitude()+ ")";
-	        webView.loadUrl(centerURL);
-	      
-	        final String markURL = "javascript:mark(" +
-	        		location.getLatitude() + "," +
-	        		location.getLongitude()+ ")";
-	        webView.loadUrl(markURL);
+			
+			final String centerURL = "javascript:centerAt(" +
+		    location.getLatitude() + "," +
+		    location.getLongitude()+ ")";
+		    webView.loadUrl(centerURL);
+		    
+		    if(location.getProvider().equals("gps")){
+		        final String markURL = "javascript:mark1(" +
+		        		location.getLatitude() + "," +
+		        		location.getLongitude()+ ")";
+		        webView.loadUrl(markURL);
+		    }
+		    else{
+		    	final String markURL = "javascript:mark(" +
+		        		location.getLatitude() + "," +
+		        		location.getLongitude()+ ")";
+		        webView.loadUrl(markURL);
+		    }
 		}
 		
     }
@@ -119,7 +142,7 @@ public class Gps_test extends Activity implements LocationListener{
     public void onProviderDisabled(String provider) {
 
         // TODO Auto-generated method stub
-    	Toast.makeText(this, "Location provider disabled", Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
     }
 
  
@@ -131,7 +154,7 @@ public class Gps_test extends Activity implements LocationListener{
     public void onProviderEnabled(String provider) {
 
         // TODO Auto-generated method stub
-    	Toast.makeText(this, "Get location provider", Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "Get "+ provider  +" provider", Toast.LENGTH_LONG).show();
     }
 
  
@@ -142,31 +165,9 @@ public class Gps_test extends Activity implements LocationListener{
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
-    	Toast.makeText(this, "Status changed", Toast.LENGTH_LONG).show();
-    }
-    private LocationManager lms;
-
-    private String bestProvider = LocationManager.GPS_PROVIDER;
-
-    private void locationServiceInitial() {
-
-        // TODO Auto-generated method stub
-
-    lms = (LocationManager) getSystemService(LOCATION_SERVICE);
-    /*
-    Criteria criteria = new Criteria();
-    bestProvider = lms.getBestProvider(criteria, true);
-	*/
-    lms.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,this);
-    lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,this);
-    
-    Location location = lms.getLastKnownLocation(bestProvider);
-    
-        getLocation(location);
-
+    	Toast.makeText(this, provider + " status changed", Toast.LENGTH_LONG).show();
     }
 
- 
 	private void getLocation(Location location) {
 
         // TODO Auto-generated method stub
@@ -179,7 +180,7 @@ public class Gps_test extends Activity implements LocationListener{
             
             TextView time_txt = (TextView)findViewById(R.id.time);
             
-            
+           
 
             Double longitude = location.getLongitude(); //蝬漲get
 
@@ -196,11 +197,8 @@ public class Gps_test extends Activity implements LocationListener{
             latitude_txt.setText(String.valueOf(latitude));
             
             time_txt.setText(String.valueOf(dateString));
+         
             
-            message_txt = (TextView)findViewById(R.id.message);
-            message_txt.setText(String.valueOf(location));
-            
-            JSONArray jsonArr = new JSONArray();
             JSONObject jsonObj = new JSONObject();
             
             
@@ -211,11 +209,7 @@ public class Gps_test extends Activity implements LocationListener{
 				jsonObj.put("longitude", longitude);
 				jsonObj.put("latitude", latitude);
 				jsonObj.put("time", dateString);
-				jsonArr.put(jsonObj);
-				connect = new ServerConnector(jsonArr);
-				
-				new  Thread (runnable).start();  
-				
+				buffer.put(jsonObj);
 				
 				
 			} catch (JSONException e) {
@@ -223,6 +217,8 @@ public class Gps_test extends Activity implements LocationListener{
 				e.printStackTrace();
 			}
             
+            message_txt = (TextView)findViewById(R.id.message);
+            message_txt.setText(String.valueOf(buffer.length()));
 
         }else{
 
@@ -245,20 +241,12 @@ public class Gps_test extends Activity implements LocationListener{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		if(getService) {
-			lms.requestLocationUpdates(bestProvider, 1, 0, this);
-		}
-	
 	}
  
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-	/*	if(getService) {
-			lms.requestLocationUpdates(bestProvider, 1, 0, this);
-		}
-	*/
 	}
 
 }
