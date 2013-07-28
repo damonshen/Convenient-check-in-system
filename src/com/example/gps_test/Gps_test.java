@@ -58,31 +58,28 @@ public class Gps_test extends Activity implements LocationListener{
         });     
         
 		LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
-		
 		setupWebView();//load Webview
 		
 		if (status.isProviderEnabled(LocationManager.GPS_PROVIDER) || status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			getService = true;
-			locationServiceInitial();
-			
+			locationServiceInitial();	
 		} else {
 			Toast.makeText(this, "Please open the GPS service!!", Toast.LENGTH_LONG).show();
 			startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
 		   
     }
+	
 	/** Sets up the WebView object and loads the URL of the page **/
 	@SuppressLint("SetJavaScriptEnabled")
-	private void setupWebView(){ 
+	private void setupWebView(){
 	    webView = (WebView) findViewById(R.id.google_map);
 	    webView.getSettings().setJavaScriptEnabled(true);//enable the javascript of webView
 	    webView.loadUrl(MAP_URL);  //loading URL 
 	}
-    
-    
-
+	
     private String bestProvider = LocationManager.GPS_PROVIDER;
-
+    
     private void locationServiceInitial() {
 
         // TODO Auto-generated method stub
@@ -92,8 +89,8 @@ public class Gps_test extends Activity implements LocationListener{
     Criteria criteria = new Criteria();
     bestProvider = lms.getBestProvider(criteria, true);
 	*/
-    //lms.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,this);
-    lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,this);
+    lms.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,this);
+    lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0,this);
     
     Location location = lms.getLastKnownLocation(bestProvider);
     
@@ -132,9 +129,6 @@ public class Gps_test extends Activity implements LocationListener{
 		}
 		
     }
-
- 
-
     /*當GPS或是網路定位功能關閉時*/
 
     @Override
@@ -156,16 +150,13 @@ public class Gps_test extends Activity implements LocationListener{
         // TODO Auto-generated method stub
     	Toast.makeText(this, "Get "+ provider  +" provider", Toast.LENGTH_LONG).show();
     }
-
- 
-
     /*定位狀態改變時*/
 
     @Override
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
-    	Toast.makeText(this, provider + " status changed", Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, provider + " status changed: " + String.valueOf(status), Toast.LENGTH_LONG).show();
     }
 
 	private void getLocation(Location location) {
@@ -197,12 +188,8 @@ public class Gps_test extends Activity implements LocationListener{
             latitude_txt.setText(String.valueOf(latitude));
             
             time_txt.setText(String.valueOf(dateString));
-         
-            
+        
             JSONObject jsonObj = new JSONObject();
-            
-            
-            
             try {
             	
             	jsonObj.put("id", "091234567");			
@@ -218,16 +205,10 @@ public class Gps_test extends Activity implements LocationListener{
 			}
             
             message_txt = (TextView)findViewById(R.id.message);
-            message_txt.setText(String.valueOf(buffer.length()));
-
+            message_txt.setText(location.getProvider()+jsonObj.toString()+" amount: "+String.valueOf(buffer.length()));
         }else{
-
             Toast.makeText(this, "Can't get your location!!", Toast.LENGTH_LONG).show();
-
         }
-
-       
-
     }
     
     Runnable runnable = new Runnable(){  //create a runnable for sending request of http 
