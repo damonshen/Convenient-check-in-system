@@ -30,7 +30,7 @@ public class ServerConnector {
 	
 	protected String sendLocation(){
 		HttpClient httpClient =  new  DefaultHttpClient(); 
-		String url = "http://192.168.137.250/test.php";
+		String url = "http://140.116.86.246:16816/project/uploadGPSLocation.php";
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("data",_dataArray.toString()));

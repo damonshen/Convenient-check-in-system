@@ -4,5 +4,6 @@
     <string name="app_name">gps_test</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="app_id">595316600491220</string>
 
 </resources>
