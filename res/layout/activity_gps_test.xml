@@ -48,24 +48,22 @@
             android:id="@+id/facebookbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="登入" />
 
         <Button
             android:id="@+id/getCheckin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="取得停留點" />
 
-        <ToggleButton
-            android:id="@+id/toggleLocus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="軌跡" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="-------------" />
     </LinearLayout>
 

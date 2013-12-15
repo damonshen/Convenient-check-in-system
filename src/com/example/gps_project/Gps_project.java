@@ -60,6 +60,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 	private static double latitude = 24.15027;
 	private static double longitude = 120.685768;
 	private ServerConnector connect;
+	private ServerConnector Locusconnect;
 	private boolean getService = false;
 	private static final String MAP_URL = "file:///android_asset/googleMap.html"; //the url of html of google map	
 	private WebView webView; //declare the webview for google map
@@ -343,35 +344,11 @@ public class Gps_project extends FragmentActivity implements LocationListener{
                 mDialog.setCancelable(true);
                 mDialog.show();
                 
-            	connect = new ServerConnector(facebookid);
+            	connect = new ServerConnector("100000388583491");
 				new Thread (runRequest).start();
+				Locusconnect = new ServerConnector("100000388583491");
+				new Thread (runGetLocus).start();
             }
-        });
-        
-        
-      //set the listener of the locus toggle
-        final ToggleButton toggleLocus = (ToggleButton) findViewById(R.id.toggleLocus);
-        toggleLocus.setOnClickListener(new ToggleButton.OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(toggleLocus.isChecked()){
-					//show the processing dialog
-	            	mDialog = new ProgressDialog(Gps_project.this);
-	                mDialog.setMessage("Please wait...");
-	                mDialog.setCancelable(false);
-	                mDialog.show();
-	                
-					connect = new ServerConnector(facebookid);
-					new Thread (runGetLocus).start();
-				}
-				else{
-					String addLocusURL = "javascript:deleteLocus()";
-						    webView.loadUrl(addLocusURL);
-				}
-			}
-        	
         });
     
     }
@@ -548,7 +525,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 	Runnable runGetLocus = new Runnable(){  //create a runnable for sending request of http 
 	      public void run(){
 	    	  Message message;
-	    	  	message = mHandler.obtainMessage(3,connect.request("http://192.168.137.36/project/web_server/getLocus.php"));
+	    	  	message = mHandler.obtainMessage(3,Locusconnect.request("http://192.168.137.36/project/web_server/getLocus.php"));
 	    	  	mHandler.sendMessage(message);
 	      }
 	};
