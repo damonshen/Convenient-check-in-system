@@ -1,72 +1,138 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Google Maps JavaScript API v3 Example: Marker Animations</title>
-    <link href="/maps/documentation/javascript/examples/default.css" rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-    <script>
-      var map;
-      var goldStar = {
-				  path: google.maps.SymbolPath.CIRCLE,
-				  fillColor: "blue",
-				  scale: 5
-		};
-      	function mark(lat, log){//標註座標函式
-        	var m = new google.maps.LatLng(lat, log); 	
-     	
-        	var marker = new google.maps.Marker({
-          		map:map,
-          		draggable:false,
-          		position: m,
-          		title: "location",
-        	});
-        	
-        	var infowindow = new google.maps.InfoWindow({
-    			content: lat + ", " + log
+	<head>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<style type="text/css">
+			html { height: 100% }
+			body { height: 100%; margin: 0; padding: 0 }
+			#map_canvas { height: 100% }
+		</style>
+		<script type="text/javascript"
+			src="http://maps.googleapis.com/maps/api/js?sensor=false">
+		</script>
+		<script>
+			var map;
+			var currMarker;
+			var goldStar = {
+				path: google.maps.SymbolPath.CIRCLE,
+				fillColor: "blue",
+				scale: 5
+			};
+			function mark(lat, log, locationInfo){//璅酉摨扳��賢�
+				var m = new google.maps.LatLng(lat, log); 	
+
+				var marker = new google.maps.Marker({
+					map:map,
+					draggable:false,
+					position: m,
+					title: "location",
+					icon: 'pin2.png',
 				});
-        	google.maps.event.addListener(marker, 'click', function() {
-  				infowindow.open(map,marker);
-				});     
-      	}
 
-		function mark1(lat, log){//標註座標函式
-        	var m = new google.maps.LatLng(lat, log); 	
-     	
-        	var marker = new google.maps.Marker({
-          		map:map,
-          		draggable:false,
-          		position: m,
-          		title: "location",
-          		icon: goldStar
-        	});
-        	
-        	var infowindow = new google.maps.InfoWindow({
-    			content: lat + ", " + log
+				var infowindow = new google.maps.InfoWindow({
+					content: locationInfo
 				});
-        	google.maps.event.addListener(marker, 'click', function() {
-  				infowindow.open(map,marker);
+				google.maps.event.addListener(marker, 'click', function() {
+					infowindow.open(map,marker);
+					Android.showMsg(lat + ", " +log);
 				});     
-      	}
+			}
 
-		function initialize() {
-        	var mapOptions = {
-          		center: new google.maps.LatLng(-34.397, 150.644),
-          		zoom: 17,
-          		mapTypeId: google.maps.MapTypeId.ROADMAP
-        	};
-        	map = new google.maps.Map(document.getElementById("map_canvas"),
-            	mapOptions);
-      	}
-      
-      	function centerAt(latitude, longitude){//地圖以給予的座標為中心，即移動地圖至給定的座標
-        	myLatlng = new google.maps.LatLng(latitude,longitude);
-          	map.panTo(myLatlng);
-      	}    
+			//mark locus
+			function markLocus(lat, log){
+				var m = new google.maps.LatLng(lat, log); 	
 
-    </script>
-  </head>
-  <body onload="initialize()">
-    <div id="map_canvas" style="width: device-width; height: 460px;">map div</div>
-  </body>
+				var marker = new google.maps.Marker({
+					map:map,
+					draggable:false,
+					position: m,
+					title: "location",
+					icon: 'footprints.png',
+				});
+
+				var infowindow = new google.maps.InfoWindow({
+					content: locationInfo
+				});
+				google.maps.event.addListener(marker, 'click', function() {
+					infowindow.open(map,marker);
+					Android.showMsg(lat + ", " +log);
+				});     
+			}
+
+			//mark current position
+			function mark1(lat, log){
+				var m = new google.maps.LatLng(lat, log); 	
+
+				//currMarker.setMap(null);
+				currMarker = null;
+				currMarker = new google.maps.Marker({
+					map:map,
+					draggable:false,
+					position: m,
+					title: "location",
+					icon: goldStar
+				});
+
+				var infowindow = new google.maps.InfoWindow({
+					content: lat + ", " + log
+				});
+				google.maps.event.addListener(currMarker, 'click', function() {
+					infowindow.open(map,currMarker);
+				});
+			}
+
+			var poly;
+
+			function initialize() {
+				var mapOptions = {
+					center: new google.maps.LatLng(22.997094,120.220875),
+					zoom: 17,
+					//disableDefaultUI:true,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				map = new google.maps.Map(document.getElementById("map_canvas"),
+				mapOptions);
+				var polyOptions = {
+					strokeColor: '#000000',
+					strokeOpacity: 1.0,
+					strokeWeight: 3
+				}
+				poly = new google.maps.Polyline(polyOptions);
+				poly.setMap(map);
+				// Add a listener for the click event
+				google.maps.event.addListener(map, 'click', addLatLng);
+
+			}
+
+			function centerAt(latitude, longitude){				
+				myLatlng = new google.maps.LatLng(latitude,longitude);
+				map.panTo(myLatlng);      	
+			}    
+
+			/**
+			* Handles click events on a map, and adds a new point to the Polyline.
+			* @param {MouseEvent} mouseEvent
+			*/
+			function addLatLng(lat, lng) {	
+
+				var path = poly.getPath();
+
+				// Because path is an MVCArray, we can simply append a new coordinate
+				// and it will automatically appear
+				path.push(new google.maps.LatLng(lat,lng));
+				poly.setMap(map);
+
+			}
+
+			function deleteLocus(){
+				poly.setMap(null);
+				//poly = null;
+				//poly = new google.maps.Polyline(polyOptions);
+			}
+
+		</script>
+	</head>
+	<body onload="initialize()">
+		<div id="map_canvas" style="width:100% ; height: 100%"></div>
+	</body>
 </html>

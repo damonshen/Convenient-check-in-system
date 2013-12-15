@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout>
+
+        <ImageView
+		    android:id="@+id/image1"
+		    android:layout_width="260dp"
+		    android:layout_height="260dp"
+		    android:layout_alignParentEnd="false"
+		    android:layout_alignParentStart="false"
+		    android:layout_alignParentTop="true"
+		    android:layout_centerHorizontal="true"
+		    android:src="@drawable/ic_launcher" />
+        
+		<Button
+		    android:id="@+id/prev"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@id/image1"
+		    android:text="&lt;-" />
+		
+		<Button
+		    android:id="@+id/scale"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignBaseline="@id/prev"
+		    android:layout_alignBottom="@id/prev"
+		    android:layout_alignLeft="@id/prev"
+		    android:layout_marginLeft="44dp"
+		    android:text="放大" />
+		
+		<Button
+		    android:id="@+id/next"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignBaseline="@id/scale"
+		    android:layout_alignBottom="@id/scale"
+		    android:layout_toRightOf="@id/scale"
+		    android:text="->" />
+
+		
+
+		<Button
+		    android:id="@+id/pickphoto"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignBaseline="@id/next"
+		    android:layout_alignBottom="@id/next"
+		    android:layout_alignParentRight="true"
+		    android:text="從相簿挑選!!" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout >
+        <TextView
+	  	    android:id="@+id/a"
+	  	    android:layout_width="fill_parent"
+	  	    android:layout_height="32dp"
+	  	    android:text="Describe the place you want to check in!!"
+	  	    android:textColor="@color/black" />
+
+	    <EditText
+	        android:id="@+id/edittext"
+	        android:layout_width="match_parent"
+	        android:layout_height="64dp"
+	        android:layout_below="@id/a" />
+	    
+    </RelativeLayout>
+    <RelativeLayout >
+
+	   <Button
+	       android:id="@+id/Checkin"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_alignParentTop="true"
+	       android:layout_marginLeft="19dp"
+	       android:layout_toRightOf="@+id/friend"
+	       android:text="發佈" />
+
+	   <Button
+	       android:id="@+id/friend"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_alignParentLeft="true"
+	       android:layout_alignParentTop="true"
+	       android:text="誰和你在一起" />
+	   
+		<TextView
+	        android:id="@+id/b"
+	        android:layout_width="fill_parent"
+	        android:layout_height="32dp"
+	        android:text=""
+	        android:textColor="@color/black"
+	        android:layout_below="@id/friend" />
+    </RelativeLayout>
+</TableLayout>

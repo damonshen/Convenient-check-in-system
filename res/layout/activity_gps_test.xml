@@ -1,63 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" xmlns:tools="http://schemas.android.com/tools" tools:ignore="HardcodedText">
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="longitude_label" />
-
-    <TextView
-        android:id="@+id/longitude"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="latitude_label" />
-
-    <TextView
-        android:id="@+id/latitude"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="time" />
-
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
-<TableRow>
-    <Button
-        android:id="@+id/uploadButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:text="upload" />
-
-    <ToggleButton
-        android:id="@+id/toggle"
+        <WebView
+            android:id="@+id/google_map"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/user_pic"
+            android:layout_alignParentTop="true" />
+        <com.facebook.widget.ProfilePictureView
+        android:id="@+id/user_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ToggleButton" />
-</TableRow>
+        android:layout_above="@+id/linearLayout1"
+        android:layout_alignParentRight="true"
+        android:gravity="center_horizontal" >
+    </com.facebook.widget.ProfilePictureView>
+
     <TextView
-        android:id="@+id/message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:id="@+id/txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/google_map"
+        android:layout_toLeftOf="@+id/user_pic"
+        android:text="@string/hello" />
+    
+    <TextView
+    	android:id="@+id/speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/google_map"
+        android:text="" />
 
-    <WebView
-        android:id="@+id/google_map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        style="@android:style/ButtonBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal" >
 
-</TableLayout>
+        <Button
+            android:id="@+id/facebookbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="登入" />
+
+        <Button
+            android:id="@+id/getCheckin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取得停留點" />
+
+        <ToggleButton
+            android:id="@+id/toggleLocus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="軌跡" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-------------" />
+    </LinearLayout>
+
+    
+
+</RelativeLayout>
