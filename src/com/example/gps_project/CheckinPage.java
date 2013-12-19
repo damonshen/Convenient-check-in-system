@@ -105,17 +105,17 @@ public class CheckinPage extends Activity{
 			e.printStackTrace();
 		}
     	
-    	final String sFileName=Environment.getExternalStorageDirectory()+"/DCIM/100MEDIA/";
-    	File file = new File(sFileName);
+    	//final String sFileName=Environment.getExternalStorageDirectory()+"/DCIM/100MEDIA/";
+    	File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
     	int i = 0;
         try{
 	        for(i = 0; i < file.list().length; i++){
 	        	String name=file.list()[i];
-	        	ExifInterface exif = new ExifInterface(sFileName+name);
+	        	ExifInterface exif = new ExifInterface(file.getAbsolutePath()+name);
 	            String date=exif.getAttribute(ExifInterface.TAG_DATETIME);
 	            tem_date = fmt.parse(date);
 	            if(Math.abs(tem_date.getTime()- middle) < half)
-	            	filelist.add(new fileinfo(date, sFileName+name));
+	            	filelist.add(new fileinfo(date, file.getAbsolutePath()+name));
 	        }
         }catch(Exception ee){
         	Log.v("error", file.list()[i]);
