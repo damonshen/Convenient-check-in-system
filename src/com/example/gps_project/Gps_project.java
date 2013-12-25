@@ -64,26 +64,26 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 	private boolean getService = false;
 	private static final String MAP_URL = "file:///android_asset/googleMap.html"; //the url of html of google map	
 	private WebView webView; //declare the webview for google map
-    private LocationManager lms;
-    private JSONArray buffer = new JSONArray();
-    public static final String APP_ID = "144319489109749";
-    private static TextView mText;
-    private Session usersession = null;
-    private static int p;
-    private String facebookid = "";
-    private ProgressDialog mDialog;
-    
-    
-    
-    
-    
-    final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
-    private static final List<String> PERMISSIONS = Arrays.asList("publish_actions",  "user_status", "user_photos", "friends_photos", "publish_stream");
-    
-    
-    private Handler mHandler =  new  Handler() {
+	private LocationManager lms;
+	private JSONArray buffer = new JSONArray();
+	public static final String APP_ID = "144319489109749";
+	private static TextView mText;
+	private Session usersession = null;
+	private static int p;
+	private String facebookid = "";
+	private ProgressDialog mDialog;
+
+
+
+
+
+	final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
+	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions",  "user_status", "user_photos", "friends_photos", "publish_stream");
+
+
+	private Handler mHandler =  new  Handler() {
 		public  void  handleMessage (Message msg) {
-			
+
 			String buf = null;
 			switch(msg.what){
 				case 1: 
@@ -91,36 +91,36 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 					break;
 				case 2:
 					try {
-						
+
 						mDialog.dismiss();
 						JSONArray checkinArray = new JSONArray(String.valueOf(msg.obj));
 						LayoutInflater inflater = LayoutInflater.from(Gps_project.this); 
 						final View v = inflater.inflate(R.layout.locationmenu, null);
 						final ListView lv = (ListView)v.findViewById(R.id.locationmenu);
-						
-						 
+
+
 						final Vector<String> tmp = new Vector<String>();
 						final Vector<String> tem_ID = new Vector<String>();
 						final Vector<String> time = new Vector<String>();
 						final ArrayList<gpsinfo> gps = new ArrayList<gpsinfo>();
 						Location requestlocation = new Location("User");
 						//final Location att = new Location("test");
-						
-						
+
+
 						p = checkinArray.length();
 						for(int i=0 ; i<checkinArray.length() ; ++i){
 							final JSONObject point = checkinArray.getJSONObject(i);
-							
+
 							requestlocation.setLatitude(point.getDouble("lat"));
-					        requestlocation.setLongitude(point.getDouble("lng"));
-							
-					        
+							requestlocation.setLongitude(point.getDouble("lng"));
+
+
 							Request.executePlacesSearchRequestAsync(Session.getActiveSession(), requestlocation, 100, 10, null, new GraphPlaceListCallback(){
 
 								@Override
 								public void onCompleted(
-										List<GraphPlace> places,
-										Response response) {
+									List<GraphPlace> places,
+									Response response) {
 									// TODO Auto-generated method stub
 									if(places != null && !places.isEmpty()){
 										try {
@@ -152,7 +152,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 												@Override
 												public void onItemClick(AdapterView<?> arg0,
-														View arg1, int arg2, long arg3) {
+													View arg1, int arg2, long arg3) {
 													// TODO Auto-generated method stub
 													final Intent myIntent = new Intent(getApplicationContext(), Places.class);
 													Bundle para = new Bundle();
@@ -162,14 +162,14 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 													para.putString("Start", gps.get(arg2).Start);
 													para.putString("End", gps.get(arg2).End);
 													myIntent.putExtras(para);
-										            startActivity(myIntent);
+													startActivity(myIntent);
 												}});
 											new AlertDialog.Builder(Gps_project.this).setTitle("test").setView(v).setPositiveButton("懶人功能", new DialogInterface.OnClickListener(){
 
 												@Override
 												public void onClick(
-														DialogInterface arg0,
-														int arg1) {
+													DialogInterface arg0,
+													int arg1) {
 													// TODO Auto-generated method stub
 													String message = "嘿嘿~"+mText.getText()+"到此一遊!!";
 													Iterator<String> it = tem_ID.iterator();
@@ -179,7 +179,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 														params.putString("message", message+"\n"+itt.next());
 														params.putString("place", it.next());
 														new RequestAsyncTask(new Request(Session.getActiveSession(), "me/feed", params, HttpMethod.POST, new Request.Callback() {
-															
+
 															@Override
 															public void onCompleted(Response response) {
 																// TODO Auto-generated method stub
@@ -187,37 +187,37 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 															}
 														})).execute();
 													}
-													
-												}
-												
-												
+
+													}
+
+
 											}).show();
 										}
 									}
 									else
 										p--;
-									
-									
-									
-								}
-					        	
-					        });
+
+
+
+									}
+
+							});
 							String centerURL = "javascript:centerAt(" +
-								    point.getString("lat") + "," +
-								    point.getString("lng")+ ")";
-								    webView.loadUrl(centerURL);
-						
+								point.getString("lat") + "," +
+								point.getString("lng")+ ")";
+							webView.loadUrl(centerURL);
+
 							String markURL = "javascript:mark(" +
-							        point.getString("lat") + "," +
-							        point.getString("lng")          + ")";
-							        webView.loadUrl(markURL);
+								point.getString("lat") + "," +
+								point.getString("lng")          + ")";
+							webView.loadUrl(markURL);
 						}					
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-					
+
+
 					break;
 				case 3:
 					try {
@@ -227,9 +227,9 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 							final JSONObject point = locusArray.getJSONObject(i);
 							if(i%10 == 0){
 								String addLocusURL = "javascript:markLocus(" +
-										point.getString("lat") + "," +
-										point.getString("lng")+ ")";
-								    	webView.loadUrl(addLocusURL);
+									point.getString("lat") + "," +
+									point.getString("lng")+ ")";
+								webView.loadUrl(addLocusURL);
 							}
 						}
 					} catch (JSONException e) {
@@ -241,24 +241,24 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 			}
 		}
 	};
-	
+
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    	setContentView(R.layout.activity_gps_test);
-    	
-    		
-        
-    	mText = (TextView) findViewById(R.id.txt);
-        final Button facebookButton = (Button)findViewById(R.id.facebookbutton);
-        Button friendbutton = (Button)findViewById(R.id.button);
-        friendbutton.setOnClickListener(new Button.OnClickListener(){
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_gps_test);
+
+
+
+		mText = (TextView) findViewById(R.id.txt);
+		final Button facebookButton = (Button)findViewById(R.id.facebookbutton);
+		Button friendbutton = (Button)findViewById(R.id.button);
+		friendbutton.setOnClickListener(new Button.OnClickListener(){
 
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				final Intent myIntent = new Intent(getApplicationContext(), Places.class);
-				
+
 				Bundle para = new Bundle();
 				para.putString("accesstoken", Session.getActiveSession().getAccessToken());
 				para.putDouble("Latitude", 24.15027);
@@ -266,16 +266,16 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 				para.putString("Start", "2013-11-26 07:00:01");
 				para.putString("End", "2013-11-26 08:00:01");
 				myIntent.putExtras(para);
-	            startActivity(myIntent);
+				startActivity(myIntent);
 			}
-        	
-        });
-        
-        
-        
+
+		});
+
+
+
 		LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
 		setupWebView();//load Webview
-		
+
 		if (status.isProviderEnabled(LocationManager.GPS_PROVIDER) || status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			getService = true;
 			locationServiceInitial();
@@ -284,315 +284,315 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 			startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
 
-        
-        facebookButton.setOnClickListener(new Button.OnClickListener(){
+
+		facebookButton.setOnClickListener(new Button.OnClickListener(){
 
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				
+
 				Session.openActiveSession(Gps_project.this, true, new Session.StatusCallback() {
 
-			  	      // callback when session changes state
-			  	      @Override
-			  	      public void call(final Session session, SessionState state, Exception exception) {
-			  	        if (session.isOpened()) {
-			  	        	usersession = session;
-			  	        	
-			  	        	
-			  	          // make request to the /me API
-			  	          Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+					// callback when session changes state
+					@Override
+					public void call(final Session session, SessionState state, Exception exception) {
+						if (session.isOpened()) {
+							usersession = session;
 
-			  	            // callback after Graph API response with user object
-			  	            @Override
-			  	            public void onCompleted(GraphUser user, Response response) {
-			  	            	if (user != null) {
-			  	            		try{
-			  	            			ProfilePictureView profilePictureView = (ProfilePictureView)findViewById(R.id.user_pic);
-			  	            			profilePictureView.setProfileId(user.getId());
-			  	            			mText.setText("Hi " + user.getName() + "!!");
-			  	            			facebookid = user.getId();
 
-			  	            		}catch(Exception e){
-			  	            			mText.setText(e.getMessage());
-			  	            		}
-			  	            		
-			  	            	}
-			  	            	else mText.setText("error");
-			  	            }
-			  	          });
-			  	        }
-			  	      }
-			  	    });
-				
+							// make request to the /me API
+							Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+								// callback after Graph API response with user object
+								@Override
+								public void onCompleted(GraphUser user, Response response) {
+									if (user != null) {
+										try{
+											ProfilePictureView profilePictureView = (ProfilePictureView)findViewById(R.id.user_pic);
+											profilePictureView.setProfileId(user.getId());
+											mText.setText("Hi " + user.getName() + "!!");
+											facebookid = user.getId();
+
+										}catch(Exception e){
+											mText.setText(e.getMessage());
+										}
+
+									}
+									else mText.setText("error");
+								}
+							});
+						}
+					}
+				});
+
 			}
-        	
 
-			
-        });
-        
-        
-        final Button getCheckin = (Button)findViewById(R.id.getCheckin);//declare a button for getting the node that should be checked in
-        getCheckin.setOnClickListener(new Button.OnClickListener(){ // set a button listener for get the array of checkin-node 
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-            	
-            	//show the processing dialog
-            	mDialog = new ProgressDialog(Gps_project.this);
-                mDialog.setMessage("Please wait...");
-                mDialog.setCancelable(true);
-                mDialog.show();
-                
-            	connect = new ServerConnector("100000388583491");
+
+
+		});
+
+
+		final Button getCheckin = (Button)findViewById(R.id.getCheckin);//declare a button for getting the node that should be checked in
+		getCheckin.setOnClickListener(new Button.OnClickListener(){ // set a button listener for get the array of checkin-node 
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				//show the processing dialog
+				mDialog = new ProgressDialog(Gps_project.this);
+				mDialog.setMessage("Please wait...");
+				mDialog.setCancelable(true);
+				mDialog.show();
+
+				connect = new ServerConnector("100000388583491");
 				new Thread (runRequest).start();
 				Locusconnect = new ServerConnector("100000388583491");
 				new Thread (runGetLocus).start();
-            }
-        });
-    
-    }
+			}
+		});
 
-	
+	}
+
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 	}
-	
+
 	private void enable(){
 		if(getService) {
 			//lms.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0,this);
-	    	lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100000, 0,this);
+			lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100000, 0,this);
 		}
 	}
 	private void disable(){
 		if(getService) {
 			lms.removeUpdates(this);
-			
+
 		}
 	}
-	
+
 	/** Sets up the WebView object and loads the URL of the page **/
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setupWebView(){
-	    webView = (WebView) findViewById(R.id.google_map);
-	    webView.getSettings().setJavaScriptEnabled(true);//enable the javascript of webView
-	    webView.addJavascriptInterface(new FromJavaScript(this), "Android");// enable javascript call class FromJavaScript
-	    webView.loadUrl(MAP_URL);  //loading URL 
+		webView = (WebView) findViewById(R.id.google_map);
+		webView.getSettings().setJavaScriptEnabled(true);//enable the javascript of webView
+		webView.addJavascriptInterface(new FromJavaScript(this), "Android");// enable javascript call class FromJavaScript
+		webView.loadUrl(MAP_URL);  //loading URL 
 	}
-	
-    //private String bestProvider = LocationManager.GPS_PROVIDER;
-    
-    private void locationServiceInitial() {
 
-        // TODO Auto-generated method stub
+	//private String bestProvider = LocationManager.GPS_PROVIDER;
 
-    lms = (LocationManager) getSystemService(LOCATION_SERVICE);
-    enable();
+	private void locationServiceInitial() {
 
-    }
+		// TODO Auto-generated method stub
 
-    
-    /*當位置改變的時候*/
-    @Override
-    public void onLocationChanged(Location location) {
+		lms = (LocationManager) getSystemService(LOCATION_SERVICE);
+		enable();
 
-        // TODO Auto-generated method stub
+	}
+
+
+	/*當位置改變的時候*/
+	@Override
+	public void onLocationChanged(Location location) {
+
+		// TODO Auto-generated method stub
 
 		getLocation(location);
 		if (location !=null){    
-	        //將畫面移至定位點的位置，呼叫在googlemaps.html中的centerAt函式
-			
+			//將畫面移至定位點的位置，呼叫在googlemaps.html中的centerAt函式
+
 			final String centerURL = "javascript:centerAt(" +
-		    location.getLatitude() + "," +
-		    location.getLongitude()+ ")";
-		    webView.loadUrl(centerURL);
-		    
-		    if(location.getProvider().equals("gps")){
-		        final String markURL = "javascript:mark1(" +
-		        		location.getLatitude() + "," +
-		        		location.getLongitude()+ ")";
-		        webView.loadUrl(markURL);
-		    }
-		    else{
-		    	final String markURL = "javascript:mark1(" +
-		        		location.getLatitude() + "," +
-		        		location.getLongitude()+ ")";
-		        webView.loadUrl(markURL);
-		    }
+				location.getLatitude() + "," +
+				location.getLongitude()+ ")";
+			webView.loadUrl(centerURL);
+
+			if(location.getProvider().equals("gps")){
+				final String markURL = "javascript:mark1(" +
+					location.getLatitude() + "," +
+					location.getLongitude()+ ")";
+				webView.loadUrl(markURL);
+			}
+			else{
+				final String markURL = "javascript:mark1(" +
+					location.getLatitude() + "," +
+					location.getLongitude()+ ")";
+				webView.loadUrl(markURL);
+			}
 		}
-		
-    }
-    
-    
-    
-    /*當GPS或是網路定位功能關閉時*/
 
-    @Override
+	}
 
-    public void onProviderDisabled(String provider) {
 
-        // TODO Auto-generated method stub
-    	Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
-    }
 
- 
+	/*當GPS或是網路定位功能關閉時*/
 
-    /*當GPS或是網路定位功能開啟時*/
+	@Override
 
-    @Override
+	public void onProviderDisabled(String provider) {
 
-    public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
+	}
 
-        // TODO Auto-generated method stub
-    	Toast.makeText(this, "Get "+ provider  +" provider", Toast.LENGTH_LONG).show();
-    }
-    /*定位狀態改變時*/
 
-    @Override
 
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-    	Toast.makeText(this, provider + " status changed: " + String.valueOf(status), Toast.LENGTH_LONG).show();
-    }
+	/*當GPS或是網路定位功能開啟時*/
+
+	@Override
+
+	public void onProviderEnabled(String provider) {
+
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "Get "+ provider  +" provider", Toast.LENGTH_LONG).show();
+	}
+	/*定位狀態改變時*/
+
+	@Override
+
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, provider + " status changed: " + String.valueOf(status), Toast.LENGTH_LONG).show();
+	}
 
 	@SuppressLint("SimpleDateFormat")
 	private void getLocation(Location location) {
 
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-        if(location != null){
+		if(location != null){
 
-            longitude = location.getLongitude(); //蝬漲get
-            latitude = location.getLatitude();   //蝺臬漲get
-            
-            float speed = location.getSpeed();
-            TextView sp = (TextView) findViewById(R.id.speed);                     
-            String time_str = Long.toString(location.getTime()); //get time and convert to string
+			longitude = location.getLongitude(); //蝬漲get
+			latitude = location.getLatitude();   //蝺臬漲get
+
+			float speed = location.getSpeed();
+			TextView sp = (TextView) findViewById(R.id.speed);                     
+			String time_str = Long.toString(location.getTime()); //get time and convert to string
 			Date date = new Date(Long.parseLong(time_str.trim()));
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss"); //transform the time into format
 			String dateString = formatter.format(date);
 			sp.setText(Float.toString(speed));
 			sp.setTextSize(24);
-           
 
-            
-        
-            JSONObject jsonObj = new JSONObject();
-            try { 		
+
+
+
+			JSONObject jsonObj = new JSONObject();
+			try { 		
 				jsonObj.put("longitude", longitude);
 				jsonObj.put("latitude", latitude);
 				jsonObj.put("time", dateString);
 				buffer.put(jsonObj);
-				
-				
+
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-            
-            //if network is connected ,upload data and renew the array
-            if(isConnectInternet() && !facebookid.equals("")){ 		
-            	connect = new ServerConnector(facebookid,buffer);
+
+			//if network is connected ,upload data and renew the array
+			if(isConnectInternet() && !facebookid.equals("")){ 		
+				connect = new ServerConnector(facebookid,buffer);
 				new Thread (runnable).start();
 				buffer = new JSONArray();       	
-            }
-            
-            
-        }else{
-            Toast.makeText(this, "Can't get your location!!", Toast.LENGTH_LONG).show();
-        }
-    }
-    
-    Runnable runnable = new Runnable(){  //create a runnable for sending request of http 
-	      public void run(){
-	    	  Message message;
-	    	  message = mHandler.obtainMessage(1,connect.sendLocation());
-	    	  mHandler.sendMessage(message);
-	      }
+			}
+
+
+		}else{
+			Toast.makeText(this, "Can't get your location!!", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	Runnable runnable = new Runnable(){  //create a runnable for sending request of http 
+		public void run(){
+			Message message;
+			message = mHandler.obtainMessage(1,connect.sendLocation());
+			mHandler.sendMessage(message);
+		}
 	};
-	
+
 	Runnable runRequest = new Runnable(){  //create a runnable for sending request of http 
-	      public void run(){
-	    	  Message message;
-	    	  String result = connect.getCheckinNode();
-	    	  	message = mHandler.obtainMessage(2,result);
-	    	  	mHandler.sendMessage(message);
-	      }
+		public void run(){
+			Message message;
+			String result = connect.getCheckinNode();
+			message = mHandler.obtainMessage(2,result);
+			mHandler.sendMessage(message);
+		}
 	};
-	
+
 	Runnable runGetLocus = new Runnable(){  //create a runnable for sending request of http 
-	      public void run(){
-	    	  Message message;
-	    	  	message = mHandler.obtainMessage(3,Locusconnect.request("http://192.168.137.36/project/web_server/getLocus.php"));
-	    	  	mHandler.sendMessage(message);
-	      }
+		public void run(){
+			Message message;
+			message = mHandler.obtainMessage(3,Locusconnect.request("http://192.168.137.36/project/web_server/getLocus.php"));
+			mHandler.sendMessage(message);
+		}
 	};
-	
+
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 		Session s = Session.getActiveSession();
 		usersession = s;
-		
-    	if(s != null){
-    		List<String> permissions = s.getPermissions();
-    		//Toast.makeText(this, Boolean.toString(isSubsetOf(PERMISSIONS, permissions)), Toast.LENGTH_LONG).show();
-    		
-    		if (!isSubsetOf(PERMISSIONS, permissions)) {
-    			s.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
-    		}
-    		
-    		Request.executeMeRequestAsync(s, new Request.GraphUserCallback() {
 
-  	            // callback after Graph API response with user object
-  	            @Override
-  	            public void onCompleted(GraphUser user, Response response) {
-  	            	if (user != null) {
-  	            		try{
-  	            			ProfilePictureView profilePictureView = (ProfilePictureView)findViewById(R.id.user_pic);
-  	            			profilePictureView.setProfileId(user.getId());
-  	            			mText.setText("Hi " + user.getName() + "!!");
-  	            			facebookid=user.getId();
-  	            		}catch(Exception e){
-  	            			mText.setText(e.getMessage());
-  	            		}
-  	            		
-  	            	}
-  	            	else mText.setText("error");
-  	            }
-  	          });
-    	}
+		if(s != null){
+			List<String> permissions = s.getPermissions();
+			//Toast.makeText(this, Boolean.toString(isSubsetOf(PERMISSIONS, permissions)), Toast.LENGTH_LONG).show();
+
+			if (!isSubsetOf(PERMISSIONS, permissions)) {
+				s.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
+			}
+
+			Request.executeMeRequestAsync(s, new Request.GraphUserCallback() {
+
+				// callback after Graph API response with user object
+				@Override
+				public void onCompleted(GraphUser user, Response response) {
+					if (user != null) {
+						try{
+							ProfilePictureView profilePictureView = (ProfilePictureView)findViewById(R.id.user_pic);
+							profilePictureView.setProfileId(user.getId());
+							mText.setText("Hi " + user.getName() + "!!");
+							facebookid=user.getId();
+						}catch(Exception e){
+							mText.setText(e.getMessage());
+						}
+
+					}
+					else mText.setText("error");
+				}
+			});
+		}
 	}
- 
+
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
 	}
-	
+
 	public static double D_jw(double wd1,double jd1,double wd2,double jd2){
-	    double x,y,out;
-	    double PI=3.14159265;
-	    double R=6.371229*1e6;
-	
-	    x=(jd2-jd1)*PI*R*Math.cos( ((wd1+wd2)/2) *PI/180)/180;
-	    y=(wd2-wd1)*PI*R/180;
-	    out=Math.hypot(x,y);
-	    return out/1000;
-    }
-	
+		double x,y,out;
+		double PI=3.14159265;
+		double R=6.371229*1e6;
+
+		x=(jd2-jd1)*PI*R*Math.cos( ((wd1+wd2)/2) *PI/180)/180;
+		y=(wd2-wd1)*PI*R/180;
+		out=Math.hypot(x,y);
+		return out/1000;
+	}
+
 	public boolean isConnectInternet() {	
-        ConnectivityManager conManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
-        if(networkInfo != null){ 
-            return networkInfo.isAvailable();
-        }
-        return false;
-    }
-	
+		ConnectivityManager conManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
+		if(networkInfo != null){ 
+			return networkInfo.isAvailable();
+		}
+		return false;
+	}
+
 	private class FromJavaScript		//class for communication with google map
 	{
 		private Context c;
@@ -605,28 +605,28 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		{
 			//Log.v("123", data);
 			Message message;
-	    	message = mHandler.obtainMessage(1,data);
-	    	mHandler.sendMessage(message);
-	    	
+			message = mHandler.obtainMessage(1,data);
+			mHandler.sendMessage(message);
+
 		}
 	}
-	
+
 	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
-  	    for (String string : subset) {
-  	        if (!superset.contains(string)) {
-  	            return false;
-  	        }
-  	    }
-  	    return true;
-  	}
-	
+		for (String string : subset) {
+			if (!superset.contains(string)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
 class gpsinfo{
 	String Lat;
 	String Lon;
 	String Start;
 	String End;
-	
+
 	public void set(String lat, String lon, String start, String end){
 		Lat = lat;
 		Lon = lon;
