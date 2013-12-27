@@ -38,7 +38,7 @@ public class ServerConnector {
 	
 	protected String sendLocation(){
 		
-		String url = "http://192.168.137.36/project/web_server/updateDatabase.php";
+		String url = "http://10.3.86.146/project/web_server/updateDatabase.php";
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("id",_id));
@@ -74,7 +74,7 @@ public class ServerConnector {
 	
 	protected String getCheckinNode(){
 		
-		String url = "http://192.168.137.36/project/getStopNode.php";
+		String url = "http://10.3.86.146/project/getStopNode.php";
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("request",_id));

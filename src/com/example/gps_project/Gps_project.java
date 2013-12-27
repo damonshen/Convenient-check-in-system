@@ -164,7 +164,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 													myIntent.putExtras(para);
 													startActivity(myIntent);
 												}});
-											new AlertDialog.Builder(Gps_project.this).setTitle("test").setView(v).setPositiveButton("懶人功能", new DialogInterface.OnClickListener(){
+											new AlertDialog.Builder(Gps_project.this).setTitle("list").setView(v).setPositiveButton("懶人功能", new DialogInterface.OnClickListener(){
 
 												@Override
 												public void onClick(
@@ -264,7 +264,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 				para.putDouble("Latitude", 24.15027);
 				para.putDouble("Longitude", 120.685768);
 				para.putString("Start", "2013-11-26 07:00:01");
-				para.putString("End", "2013-11-26 08:00:01");
+				para.putString("End", "2013-12-31 08:00:01");
 				myIntent.putExtras(para);
 				startActivity(myIntent);
 			}
@@ -525,7 +525,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 	Runnable runGetLocus = new Runnable(){  //create a runnable for sending request of http 
 		public void run(){
 			Message message;
-			message = mHandler.obtainMessage(3,Locusconnect.request("http://192.168.137.36/project/web_server/getLocus.php"));
+			message = mHandler.obtainMessage(3,Locusconnect.request("http://10.3.86.146/project/web_server/getLocus.php"));
 			mHandler.sendMessage(message);
 		}
 	};
