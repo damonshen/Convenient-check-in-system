@@ -1,3 +1,6 @@
+/*
+ * Purpose:connect to server for uploading or fetching data
+ * */
 package com.example.gps_project;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +27,7 @@ public class ServerConnector {
 	private JSONArray _dataArray = new JSONArray();
 	private HttpClient httpClient =  new  DefaultHttpClient();
 	private String _id;
+	private static final String serverIP = "192.168.137.36";
 	
 	ServerConnector(String id,JSONArray data) {
 		
@@ -36,11 +40,13 @@ public class ServerConnector {
 		_id = id;
 	}
 	
+	//upload the data of locus to server
 	protected String sendLocation(){
 		
-		String url = "http://10.3.86.146/project/web_server/updateDatabase.php";
+		String url = "http://" + serverIP + "/project/web_server/updateDatabase.php";
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		//put the id and data to package
 		params.add(new BasicNameValuePair("id",_id));
 		params.add(new BasicNameValuePair("data",_dataArray.toString()));
 		   
@@ -50,7 +56,7 @@ public class ServerConnector {
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity entity = httpResponse.getEntity();
 			
-			
+			//get return info
 			InputStream inputStream = entity.getContent();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
             StringBuilder builder = new StringBuilder();
@@ -72,9 +78,10 @@ public class ServerConnector {
 		return "error";
 	}
 	
+	//get the stop node of user from server
 	protected String getCheckinNode(){
 		
-		String url = "http://10.3.86.146/project/getStopNode.php";
+		String url = "http://" + serverIP + "/project/web_server/getStopNode.php";
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("request",_id));
@@ -107,7 +114,10 @@ public class ServerConnector {
 		return "error";
 	}
 	
-	protected String request(String url){
+	//get the locus of user from server
+	protected String getLocus(){
+		
+		String url = "http://" + serverIP + "/project/web_server/getLocus.php";
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("id",_id));

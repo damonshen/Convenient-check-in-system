@@ -16,48 +16,41 @@
 
 package com.example.gps_project;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.facebook.AccessToken;
-import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.GraphPlaceListCallback;
-import com.facebook.Request.GraphUserListCallback;
-import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
-import com.facebook.android.*;
-import com.facebook.model.GraphLocation;
-import com.facebook.model.GraphObject;
 import com.facebook.model.GraphPlace;
-import com.facebook.model.GraphUser;
 
 @SuppressWarnings("deprecation")
 public class Places extends Activity implements OnItemClickListener {

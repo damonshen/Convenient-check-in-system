@@ -15,9 +15,9 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -40,11 +40,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.GraphPlaceListCallback;
-import com.facebook.HttpMethod;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -55,6 +54,7 @@ import com.facebook.widget.ProfilePictureView;
 
 
 
+@SuppressLint("HandlerLeak")
 public class Gps_project extends FragmentActivity implements LocationListener{
 
 	private static double latitude = 24.15027;
@@ -91,13 +91,11 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 					break;
 				case 2:
 					try {
-
 						mDialog.dismiss();
 						JSONArray checkinArray = new JSONArray(String.valueOf(msg.obj));
 						LayoutInflater inflater = LayoutInflater.from(Gps_project.this); 
 						final View v = inflater.inflate(R.layout.locationmenu, null);
 						final ListView lv = (ListView)v.findViewById(R.id.locationmenu);
-
 
 						final Vector<String> tmp = new Vector<String>();
 						final Vector<String> tem_ID = new Vector<String>();
@@ -113,8 +111,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 							requestlocation.setLatitude(point.getDouble("lat"));
 							requestlocation.setLongitude(point.getDouble("lng"));
-
-
+							
 							Request.executePlacesSearchRequestAsync(Session.getActiveSession(), requestlocation, 100, 10, null, new GraphPlaceListCallback(){
 
 								@Override
@@ -196,9 +193,6 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 									}
 									else
 										p--;
-
-
-
 									}
 
 							});
@@ -219,9 +213,11 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 
 					break;
+				//handle the request of drawing locus on the map
 				case 3:
 					try {
 						mDialog.dismiss();
+						
 						JSONArray locusArray = new JSONArray(String.valueOf(msg.obj));
 						for(int i=0 ; i<locusArray.length() ; ++i){
 							final JSONObject point = locusArray.getJSONObject(i);
@@ -327,8 +323,6 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 			}
 
-
-
 		});
 
 
@@ -366,20 +360,17 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 			lms.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100000, 0,this);
 		}
 	}
-	private void disable(){
-		if(getService) {
-			lms.removeUpdates(this);
-
-		}
-	}
-
+	
 	/** Sets up the WebView object and loads the URL of the page **/
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setupWebView(){
 		webView = (WebView) findViewById(R.id.google_map);
-		webView.getSettings().setJavaScriptEnabled(true);//enable the javascript of webView
-		webView.addJavascriptInterface(new FromJavaScript(this), "Android");// enable javascript call class FromJavaScript
-		webView.loadUrl(MAP_URL);  //loading URL 
+		//enable the javascript of webView
+		webView.getSettings().setJavaScriptEnabled(true);
+		// enable javascript call class FromJavaScript
+		webView.addJavascriptInterface(new FromJavaScript(this), "Android");
+		//loading URL
+		webView.loadUrl(MAP_URL);   
 	}
 
 	//private String bestProvider = LocationManager.GPS_PROVIDER;
@@ -403,7 +394,6 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		getLocation(location);
 		if (location !=null){    
 			//將畫面移至定位點的位置，呼叫在googlemaps.html中的centerAt函式
-
 			final String centerURL = "javascript:centerAt(" +
 				location.getLatitude() + "," +
 				location.getLongitude()+ ")";
@@ -436,9 +426,6 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
 	}
-
-
-
 	/*當GPS或是網路定位功能開啟時*/
 
 	@Override
@@ -457,6 +444,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		Toast.makeText(this, provider + " status changed: " + String.valueOf(status), Toast.LENGTH_LONG).show();
 	}
 
+	//when gpsListener get location node
 	@SuppressLint("SimpleDateFormat")
 	private void getLocation(Location location) {
 
@@ -475,18 +463,14 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 			String dateString = formatter.format(date);
 			sp.setText(Float.toString(speed));
 			sp.setTextSize(24);
-
-
-
-
+			
+			//store the locus in array
 			JSONObject jsonObj = new JSONObject();
 			try { 		
 				jsonObj.put("longitude", longitude);
 				jsonObj.put("latitude", latitude);
 				jsonObj.put("time", dateString);
 				buffer.put(jsonObj);
-
-
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -498,8 +482,6 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 				new Thread (runnable).start();
 				buffer = new JSONArray();       	
 			}
-
-
 		}else{
 			Toast.makeText(this, "Can't get your location!!", Toast.LENGTH_LONG).show();
 		}
@@ -525,7 +507,7 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 	Runnable runGetLocus = new Runnable(){  //create a runnable for sending request of http 
 		public void run(){
 			Message message;
-			message = mHandler.obtainMessage(3,Locusconnect.request("http://10.3.86.146/project/web_server/getLocus.php"));
+			message = mHandler.obtainMessage(3,Locusconnect.getLocus());
 			mHandler.sendMessage(message);
 		}
 	};
