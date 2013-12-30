@@ -6,7 +6,9 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-
+/*
+ This activity is used to display the photo with full resolution
+ */
 public class Scale extends Activity{
 
 	protected void onCreate(Bundle savedInstanceState) {
