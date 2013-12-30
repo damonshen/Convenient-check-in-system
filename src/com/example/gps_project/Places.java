@@ -90,6 +90,7 @@ public class Places extends Activity implements OnItemClickListener {
 
         Bundle extras = getIntent().getExtras();
         double a , b;
+        //get the bundle
         LATITUDE = extras.getDouble("Latitude");
         LONGITUDE = extras.getDouble("Longitude");
         params.putString("Start", extras.getString("Start"));
