@@ -95,23 +95,24 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 						JSONArray checkinArray = new JSONArray(String.valueOf(msg.obj));
 						LayoutInflater inflater = LayoutInflater.from(Gps_project.this); 
 						final View v = inflater.inflate(R.layout.locationmenu, null);
-						final ListView lv = (ListView)v.findViewById(R.id.locationmenu);
-
+						final ListView lv = (ListView)v.findViewById(R.id.locationmenu);	//stop point list
+						
+						/*Some information is store temporarily*/
 						final Vector<String> tmp = new Vector<String>();
 						final Vector<String> tem_ID = new Vector<String>();
 						final Vector<String> time = new Vector<String>();
 						final ArrayList<gpsinfo> gps = new ArrayList<gpsinfo>();
 						Location requestlocation = new Location("User");
-						//final Location att = new Location("test");
 
-
-						p = checkinArray.length();
+						
+						p = checkinArray.length();	//the amount of start point receive from server
 						for(int i=0 ; i<checkinArray.length() ; ++i){
 							final JSONObject point = checkinArray.getJSONObject(i);
 
 							requestlocation.setLatitude(point.getDouble("lat"));
 							requestlocation.setLongitude(point.getDouble("lng"));
 							
+							//Six parameters, session, location, search radius, amount of return information, keywords and callback 
 							Request.executePlacesSearchRequestAsync(Session.getActiveSession(), requestlocation, 100, 10, null, new GraphPlaceListCallback(){
 
 								@Override
@@ -121,6 +122,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 									// TODO Auto-generated method stub
 									if(places != null && !places.isEmpty()){
 										try {
+											
+											//Find out the attractions which are the nearest to the stop point
 											int count = 0, min_place = 0;
 											double min_dist = Double.MAX_VALUE;
 											while(count < places.size()){
@@ -130,18 +133,23 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 												}
 												count++;
 											}
+											//The string will display on the list of stop point
 											String buf = places.get(min_place).getName()+"\nStart_time:"+point.getString("startTime")+"\nEnd_time "+point.getString("endTime");
 											tmp.add(buf);
+											
 											tem_ID.add(places.get(min_place).getId());
 											gpsinfo tem_gps = new gpsinfo();
+											
 											tem_gps.set(point.getString("lat"), point.getString("lng"), point.getString("startTime"), point.getString("endTime"));
 											gps.add(tem_gps);
+											//The default message posted to the wall if the botton "懶人功能" is pressed
 											String timestring = "從 "+point.getString("startTime")+" 到 "+point.getString("endTime");
 											time.add(timestring);
 										} catch (JSONException e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();
 										}
+										//Wait until the last stop point is processed. Then make the listview
 										if(tmp.size() == p){
 											final String[] locationarray = (String[])tmp.toArray(new String[0]);
 											lv.setAdapter(new ArrayAdapter<String>(Gps_project.this, R.layout.locationitem, R.id.location_textitem, locationarray));
@@ -151,6 +159,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 												public void onItemClick(AdapterView<?> arg0,
 													View arg1, int arg2, long arg3) {
 													// TODO Auto-generated method stub
+													
+													//start another activity, pass the location and time
 													final Intent myIntent = new Intent(getApplicationContext(), Places.class);
 													Bundle para = new Bundle();
 													para.putString("accesstoken", Session.getActiveSession().getAccessToken());
@@ -245,8 +255,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 
 
-		mText = (TextView) findViewById(R.id.txt);
-		final Button facebookButton = (Button)findViewById(R.id.facebookbutton);
+		mText = (TextView) findViewById(R.id.txt);									//display client's information
+		final Button facebookButton = (Button)findViewById(R.id.facebookbutton);	//Login button
 		Button friendbutton = (Button)findViewById(R.id.button);
 		friendbutton.setOnClickListener(new Button.OnClickListener(){
 
@@ -269,9 +279,10 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 
 
-		LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
+		LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));	//open an Android location manager
 		setupWebView();//load Webview
-
+		
+		//detect whether the GPS service is opened or not
 		if (status.isProviderEnabled(LocationManager.GPS_PROVIDER) || status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			getService = true;
 			locationServiceInitial();
@@ -337,7 +348,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 				mDialog.setMessage("Please wait...");
 				mDialog.setCancelable(true);
 				mDialog.show();
-
+				
+				//use user's facebook id as database lookup identifier
 				connect = new ServerConnector("100000388583491");
 				new Thread (runRequest).start();
 				Locusconnect = new ServerConnector("100000388583491");
@@ -458,9 +470,9 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 			float speed = location.getSpeed();
 			TextView sp = (TextView) findViewById(R.id.speed);                     
 			String time_str = Long.toString(location.getTime()); //get time and convert to string
-			Date date = new Date(Long.parseLong(time_str.trim()));
+			Date date = new Date(Long.parseLong(time_str.trim()));//Create a new Date object
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss"); //transform the time into format
-			String dateString = formatter.format(date);
+			String dateString = formatter.format(date);//the string which is transformed to proper format
 			sp.setText(Float.toString(speed));
 			sp.setTextSize(24);
 			
@@ -554,7 +566,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		// TODO Auto-generated method stub
 		super.onPause();
 	}
-
+	
+	//compute the distance of two coordinates
 	public static double D_jw(double wd1,double jd1,double wd2,double jd2){
 		double x,y,out;
 		double PI=3.14159265;
@@ -565,7 +578,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		out=Math.hypot(x,y);
 		return out/1000;
 	}
-
+	
+	//check if network is available
 	public boolean isConnectInternet() {	
 		ConnectivityManager conManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
@@ -603,6 +617,8 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 	}
 
 }
+
+//the struct of start point
 class gpsinfo{
 	String Lat;
 	String Lon;
