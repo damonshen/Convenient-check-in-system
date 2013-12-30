@@ -53,7 +53,7 @@ public class CheckinPage extends Activity{
         public long time_gap = 1800000;
         static String test = "";
         static JSONArray test2 = new JSONArray();
-        static private int num_of_photos;
+        static private int num_of_photos;		//which picture is shown
         private ArrayList<fileinfo> filelist= new ArrayList<fileinfo>();
         private Boolean with_picture = false;
         private final static int PHOTO = 66 ;
@@ -77,16 +77,17 @@ public class CheckinPage extends Activity{
 
 
                 friendtext = (TextView)findViewById(R.id.b);
-                Button Checkin = (Button)findViewById(R.id.Checkin);
-                Button addfriends = (Button)findViewById(R.id.friend);
-                Button prev = (Button)findViewById(R.id.prev);
-                Button next = (Button)findViewById(R.id.next);
-                Button scale = (Button)findViewById(R.id.scale);
-                Button mPhoto = (Button) findViewById(R.id.pickphoto);
-                SimpleDateFormat gps_fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                SimpleDateFormat fmt = new SimpleDateFormat("yyyy:MM:dd hh:mm:ss");
+                Button Checkin = (Button)findViewById(R.id.Checkin);			//"發佈" button
+                Button addfriends = (Button)findViewById(R.id.friend);			//"和誰在一起" 	button
+                Button prev = (Button)findViewById(R.id.prev);					//"<-" button
+                Button next = (Button)findViewById(R.id.next);					//"->" button
+                Button scale = (Button)findViewById(R.id.scale);				//"放大" button
+                Button mPhoto = (Button) findViewById(R.id.pickphoto);			//"從相簿選照片" button
+                SimpleDateFormat gps_fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");	//The date format of GPS
+                SimpleDateFormat fmt = new SimpleDateFormat("yyyy:MM:dd hh:mm:ss");		//The date format of data information
+                
                 Date tem_date = new Date();
-                long stime, etime, half = 0, middle = 0;
+                long stime, etime, half = 0, middle = 0;		//start time, end time, the one half time gap, the center of the time interval 
                 try {
                         tem_date = gps_fmt.parse(Start_time);
                         stime = tem_date.getTime();
@@ -99,7 +100,7 @@ public class CheckinPage extends Activity{
                         e.printStackTrace();
                 }
 
-
+                //get all pictures paths under the system 
                 Cursor cursor = managedQuery(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null,
                         null, MediaStore.Images.Media.DEFAULT_SORT_ORDER);
@@ -113,6 +114,8 @@ public class CheckinPage extends Activity{
                     ExifInterface exif = new ExifInterface(data);
                     String date=exif.getAttribute(ExifInterface.TAG_DATETIME);
                     tem_date = fmt.parse(date);
+                    
+                    //Only find *.jpg files
                     Pattern pattern = Pattern.compile(".*.jpg");
             		Matcher matcher = pattern.matcher(data);
             		if(matcher.find() == true){
@@ -125,14 +128,21 @@ public class CheckinPage extends Activity{
                 }catch(Exception e){
                 	Log.v("error", "no such path");
                 }
+                
+                //Before using pictures, convert it to bitmap
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = 4;
                 Bitmap tem;
                 image = (ImageView)findViewById(R.id.image1);
+                //set prev, next, scale to unpressedable
                 prev.setEnabled(false);
                 next.setEnabled(false);
                 scale.setEnabled(false);
                 num_of_photos = 0;
+                
+                /*
+                 If we find at least one picture, enable scale;else if we find more than one picture, enable prev and next, too. 
+                  */
                 if(!filelist.isEmpty()){
                         if(filelist.size()>1){
                                 prev.setEnabled(true);
@@ -180,10 +190,6 @@ public class CheckinPage extends Activity{
                                 Bitmap tem;
                                 LayoutInflater inflater = LayoutInflater.from(CheckinPage.this); 
                                 View v_scale = inflater.inflate(R.layout.imagepreview, null);
-                                /*ImageView preview = (ImageView)v_scale.findViewById(R.id.preview); 
-                                  tem = BitmapFactory.decodeFile(filelist.get(num_of_photos).Name, options);
-                                  preview.setImageBitmap(tem);*/
-                                //new AlertDialog.Builder(CheckinPage.this).setTitle("Preview").setView(v).show();
                                 Intent myIntent = new Intent(getApplicationContext(), Scale.class);
                                 Bundle param = new Bundle();
                                 param.putString("path", filelist.get(num_of_photos).Name);
@@ -198,7 +204,7 @@ public class CheckinPage extends Activity{
                                         @Override
                                         public void onClick(View v) 
                 {
-                        /*���貊倏�貊���*/
+                        /*Open choose photos interface*/
                         Intent intent = new Intent();
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -216,6 +222,8 @@ public class CheckinPage extends Activity{
                                 EditText editText = (EditText) (findViewById(R.id.edittext));
                                 String message = editText.getText().toString();
                                 message+=("\n"+Start_time);
+                                
+                                
                                 Bundle params = new Bundle();
                                 params.putString("place", placeID);
                                 params.putString("message", message);
@@ -228,6 +236,8 @@ public class CheckinPage extends Activity{
 
                                 options.inSampleSize = 2;
                                 if(!filelist.isEmpty()){
+                                	
+                                		//Check in with photos
                                         byte[] data = null;
                                         Bitmap bi = BitmapFactory.decodeFile(filelist.get(num_of_photos).Name, options);
                                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -248,7 +258,7 @@ public class CheckinPage extends Activity{
                                         })).execute();
                                 }
                                 else{            
-
+                                		//Check in without photos
                                         params.putString("tags", test);
                                         new RequestAsyncTask(new Request(Session.getActiveSession(), "me/feed", params, HttpMethod.POST, new Request.Callback() {
 
@@ -287,17 +297,23 @@ public class CheckinPage extends Activity{
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
                 switch(requestCode){
+                
+                /*
+                 1: return from pick friend
+                 2: return from photo selection
+                 3: return from scale
+                 */
                         case 1:
                                 displaySelectedFriends(resultCode);
                                 break;
                         case 2:
-                                //���抒�頝臬�uri嚗蒂頧�absolute path
+                                //get photo path uri
                                 if(data == null)
                                         break;
                                 Uri uri = data.getData();
                                 String path = getRealPathFromURI(this, uri);
 
-                                //霈���抒�嚗��Bitmap
+                                //type is Bitmap
                                 BitmapFactory.Options options = new BitmapFactory.Options();
                                 options.inSampleSize = 4;
                                 Bitmap bitmap = BitmapFactory.decodeFile(path, options);
