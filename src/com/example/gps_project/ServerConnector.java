@@ -28,46 +28,48 @@ public class ServerConnector {
 	private HttpClient httpClient =  new  DefaultHttpClient();
 	private String _id;
 	private static final String serverIP = "192.168.137.36";
-	
+	private static final String uploadCGI = "http://" + serverIP + "/project/web_server/updateDatabase.php";
+	private static final String getCheckinCGI = "http://" + serverIP + "/project/web_server/getStopNode.php";
+	private static final String getLocusCGI = "http://" + serverIP + "/project/web_server/getLocus.php";
 	ServerConnector(String id,JSONArray data) {
-		
+
 		// TODO Auto-generated constructor stub
 		_id = id;
 		_dataArray = data;
 	}
-	
+
 	ServerConnector(String id){
 		_id = id;
 	}
-	
+
 	//upload the data of locus to server
 	protected String sendLocation(){
-		
-		String url = "http://" + serverIP + "/project/web_server/updateDatabase.php";
+
+		String url = uploadCGI;
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		//put the id and data to package
 		params.add(new BasicNameValuePair("id",_id));
 		params.add(new BasicNameValuePair("data",_dataArray.toString()));
-		   
+
 		try {
-			
+
 			httpPost.setEntity(new UrlEncodedFormEntity(params,HTTP.UTF_8)); //set the message of data
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity entity = httpResponse.getEntity();
-			
+
 			//get return info
 			InputStream inputStream = entity.getContent();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            
-            while((line = bufReader.readLine()) != null) {
-                builder.append(line + "\n");
-            }
-            inputStream.close();
-            return builder.toString();
-		
+			StringBuilder builder = new StringBuilder();
+			String line = null;
+
+			while((line = bufReader.readLine()) != null) {
+				builder.append(line + "\n");
+			}
+			inputStream.close();
+			return builder.toString();
+
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,33 +79,33 @@ public class ServerConnector {
 		}
 		return "error";
 	}
-	
+
 	//get the stop node of user from server
 	protected String getCheckinNode(){
-		
-		String url = "http://" + serverIP + "/project/web_server/getStopNode.php";
+
+		String url = getCheckinCGI;
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("request",_id));
-		   
+
 		try {
-			
+
 			httpPost.setEntity(new UrlEncodedFormEntity(params,HTTP.UTF_8)); //set the message of data
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity entity = httpResponse.getEntity();
-			
-			
+
+
 			InputStream inputStream = entity.getContent();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            
-            while((line = bufReader.readLine()) != null) {
-                builder.append(line + "\n");
-            }
-            inputStream.close();
-            return builder.toString();
-		
+			StringBuilder builder = new StringBuilder();
+			String line = null;
+
+			while((line = bufReader.readLine()) != null) {
+				builder.append(line + "\n");
+			}
+			inputStream.close();
+			return builder.toString();
+
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,33 +115,33 @@ public class ServerConnector {
 		}
 		return "error";
 	}
-	
+
 	//get the locus of user from server
 	protected String getLocus(){
-		
-		String url = "http://" + serverIP + "/project/web_server/getLocus.php";
+
+		String url = getLocusCGI;
 		HttpPost httpPost =new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("id",_id));
-		   
+
 		try {
-			
+
 			httpPost.setEntity(new UrlEncodedFormEntity(params,HTTP.UTF_8)); //set the message of data
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity entity = httpResponse.getEntity();
-			
-			
+
+
 			InputStream inputStream = entity.getContent();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            
-            while((line = bufReader.readLine()) != null) {
-                builder.append(line + "\n");
-            }
-            inputStream.close();
-            return builder.toString();
-		
+			StringBuilder builder = new StringBuilder();
+			String line = null;
+
+			while((line = bufReader.readLine()) != null) {
+				builder.append(line + "\n");
+			}
+			inputStream.close();
+			return builder.toString();
+
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

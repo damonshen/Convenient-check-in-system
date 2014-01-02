@@ -86,9 +86,11 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 
 			String buf = null;
 			switch(msg.what){
+				//show message for debuging
 				case 1: 
 					//message_txt.setText((String)msg.obj);
 					break;
+				//handle the request of checkin
 				case 2:
 					try {
 						mDialog.dismiss();
@@ -254,9 +256,10 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 		setContentView(R.layout.activity_gps_test);
 
 
-
-		mText = (TextView) findViewById(R.id.txt);									//display client's information
-		final Button facebookButton = (Button)findViewById(R.id.facebookbutton);	//Login button
+		//display client's information
+		mText = (TextView) findViewById(R.id.txt);									
+		//Login button
+		final Button facebookButton = (Button)findViewById(R.id.facebookbutton);	
 		Button friendbutton = (Button)findViewById(R.id.button);
 		friendbutton.setOnClickListener(new Button.OnClickListener(){
 
