@@ -353,9 +353,9 @@ public class Gps_project extends FragmentActivity implements LocationListener{
 				mDialog.show();
 				
 				//use user's facebook id as database lookup identifier
-				connect = new ServerConnector("100000388583491");
+				connect = new ServerConnector(facebookid);
 				new Thread (runRequest).start();
-				Locusconnect = new ServerConnector("100000388583491");
+				Locusconnect = new ServerConnector(facebookid);
 				new Thread (runGetLocus).start();
 			}
 		});

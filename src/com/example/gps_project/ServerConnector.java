@@ -27,7 +27,7 @@ public class ServerConnector {
 	private JSONArray _dataArray = new JSONArray();
 	private HttpClient httpClient =  new  DefaultHttpClient();
 	private String _id;
-	private static final String serverIP = "192.168.137.36";
+	private static final String serverIP = "10.3.246.39";
 	private static final String uploadCGI = "http://" + serverIP + "/project/web_server/updateDatabase.php";
 	private static final String getCheckinCGI = "http://" + serverIP + "/project/web_server/getStopNode.php";
 	private static final String getLocusCGI = "http://" + serverIP + "/project/web_server/getLocus.php";
